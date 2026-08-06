@@ -1,18 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class BlendShapeFrameData : MonoBehaviour
+public struct BlendShapeFrameData
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public Vector3[] deltaVertices;
+    public Vector3[] deltaNormals;
+    public Vector3[] deltaTangents;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public float blendShapeWeight;
 }
