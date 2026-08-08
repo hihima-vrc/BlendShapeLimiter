@@ -115,7 +115,10 @@ public class SelectWindow : EditorWindow
 
     private void OnDestroy()
     {
-        avatar.gameObject.SetActive(true);
+        if (avatar != null)
+        {
+            avatar.gameObject.SetActive(true);
+        }
         _orchestrator.CloseSettingWindow();
         _context.DeleteAll();
         _context = null;
