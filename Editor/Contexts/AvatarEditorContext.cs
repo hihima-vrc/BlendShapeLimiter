@@ -34,9 +34,13 @@ public class AvatarEditorContext
         SkinnedMeshRenderer.DestroyImmediate(Body);
         Body = null;
     }
+    public void UpdateBodyBlendShapeWeight(int blendShapeIndex, float blendShapeWeight)
+    {
+        Body.SetBlendShapeWeight(blendShapeIndex, blendShapeWeight);
+    }
 
     // BlendShapeNames
-    public List<string> BlendShapeNames { get; private set; }
+    public List<string> BlendShapeNames { get; private set; } = new();
     public void SetBlendShapeNames()
     {
         if (Body == null) return;
@@ -47,11 +51,12 @@ public class AvatarEditorContext
     }
     public void DeleteBlendShapeNames()
     {
+        if (BlendShapeNames == null) return;
         BlendShapeNames.Clear();
     }
 
     // BlendShapeOriginalWeights
-    public List<float> BlendShapeOriginalWeights { get; private set; }
+    public List<float> BlendShapeOriginalWeights { get; private set; } = new();
     public void SetBlendShapeOriginalWeights()
     {
         if (Body == null) return;
@@ -62,11 +67,12 @@ public class AvatarEditorContext
     }
     public void DeleteBlendShapeOriginalWeight()
     {
+        if (BlendShapeOriginalWeights == null) return;
         BlendShapeOriginalWeights.Clear();
     }
 
     // BlendShapeOverrideWeights
-    public List<float> BlendShapeOverrideWeights { get; private set; }
+    public List<float> BlendShapeOverrideWeights { get; private set; } = new();
     public void SetBlendModeOverrideWeights()
     {
         if (Body == null) return;
@@ -77,6 +83,7 @@ public class AvatarEditorContext
     }
     public void DeleteBlendShapeOverrideWeights()
     {
+        if (BlendShapeOverrideWeights == null) return;
         BlendShapeOverrideWeights.Clear();
     }
     public void UpdateBlendShapeOverrideWeights(int blendShapeIndex, float overrideWeight)
@@ -86,10 +93,24 @@ public class AvatarEditorContext
     }
 
     // SelectedBlendShapeIndex
-    public int SelectedBlendShapeIndex { get; private set; }
+    public int SelectedBlendShapeIndex { get; private set; } = -1;
     public void UpdateSelectedBlendShapeIndex(int selectedBlendShapeIndex)
     {
         SelectedBlendShapeIndex = selectedBlendShapeIndex;
+    }
+
+    // IsOpeningSettingWindow
+    public bool IsOpeningSettingWindow { get; private set; } = false;
+    public void UpdateIsOpeningSettingWindow(bool isOpeningSettingWindow)
+    {
+        IsOpeningSettingWindow = isOpeningSettingWindow;
+    }
+
+    // isConverting
+    public bool IsConverting { get; private set; } = false;
+    public void UpdateIsConverting(bool isConverting)
+    {
+        IsConverting = isConverting;
     }
 
 

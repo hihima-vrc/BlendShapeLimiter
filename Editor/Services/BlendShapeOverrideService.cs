@@ -25,8 +25,6 @@ public class BlendShapeOverrideService : IBlendShapeProcessor
             }
         }
 
-        GameObject.DestroyImmediate(avatarInstance.gameObject);
-
         return mesh;
     }
 
