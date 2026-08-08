@@ -44,7 +44,7 @@ public class SelectWindow : EditorWindow
         if (avatar != null && body == null)
         {
             EditorGUILayout.HelpBox("今無効化されたアバターからSkinnedMeshRendererをD&D", MessageType.Info);
-            EditorGUILayout.HelpBox("もし間違ったものを入れた場合は、一度ウィンドウを閉じてください", MessageType.Warning);
+            EditorGUILayout.HelpBox("もし間違ったアバターを入れた場合は、一度ウィンドウを閉じてください", MessageType.Warning);
         }
         if (EditorGUI.EndChangeCheck())
         {
