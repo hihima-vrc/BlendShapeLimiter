@@ -45,13 +45,17 @@ public class BlendShapeOverrideService : IBlendShapeProcessor
 
             for (int i = 0; i < blendShapeFrameCount; i++)
             {
-                mesh.GetBlendShapeFrameVertices(blendShapeIndex, i, deltaVertices, deltaNormals, deltaTangents);
+                Vector3[] __deltaVertices = new Vector3[vertexCount];
+                Vector3[] __deltaNormals = new Vector3[vertexCount];
+                Vector3[] __deltaTangents = new Vector3[vertexCount];
+
+                mesh.GetBlendShapeFrameVertices(blendShapeIndex, i, __deltaVertices, __deltaNormals, __deltaTangents);
 
                 BlendShapeFrameData frameData = new BlendShapeFrameData
                 {
-                    deltaVertices = deltaVertices,
-                    deltaNormals = deltaNormals,
-                    deltaTangents = deltaTangents,
+                    deltaVertices = __deltaVertices,
+                    deltaNormals = __deltaNormals,
+                    deltaTangents = __deltaTangents,
                     blendShapeWeight = overrideValue
                 };
                 frameDatas.Add(frameData);
@@ -121,7 +125,7 @@ public class BlendShapeOverrideService : IBlendShapeProcessor
                     deltaVertices = __deltaVertices,
                     deltaNormals = __deltaNormals,
                     deltaTangents = __deltaTangents,
-                    blendShapeWeight = blendShapeFrameWeights[i] * overrideValue / 100f
+                    blendShapeWeight = blendShapeFrameWeights[i] * 100f / overrideValue
                 };
                 frameDatas.Add(_frameData);
             }
