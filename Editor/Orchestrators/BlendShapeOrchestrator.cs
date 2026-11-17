@@ -11,6 +11,9 @@ public class BlendShapeOrchestrator
 
     private static SelectWindow selectWindow;
     private static SettingWindow settingWindow;
+    private static PreviewWindow previewWindow;
+    private bool _previewDirty;
+    private bool _updateHooked;
 
 
     [MenuItem("Tools/BlendShapeLimiter")]
@@ -39,6 +42,48 @@ public class BlendShapeOrchestrator
     }
 
 
+    public void OpenPreviewWindow()
+    {
+        previewWindow = PreviewWindow.OpenWindow();
+        if (_context.Body != null)
+        {
+            previewWindow.Initialize(_context.Body.bounds.center);
+        }
+        if (!_updateHooked)
+        {
+            EditorApplication.update += OnEditorUpdate;
+            _updateHooked = true;
+        }
+    }
+
+    public void ClosePreviewWindow()
+    {
+        if (_updateHooked)
+        {
+            EditorApplication.update -= OnEditorUpdate;
+            _updateHooked = false;
+        }
+        previewWindow?.CloseIfNotDocked();
+        previewWindow = null;
+    }
+
+    public void RequestPreviewRefresh()
+    {
+        _previewDirty = true;
+    }
+
+    private void OnEditorUpdate()
+    {
+        if (!_previewDirty) return;
+        _previewDirty = false;
+        if (previewWindow != null)
+        {
+            previewWindow.UpdateRenderCache();
+            previewWindow.Repaint();
+        }
+    }
+
+
     public bool SetBody(string componentName)
     {
         SkinnedMeshRenderer[] bodies = _context.Avatar.GetComponentsInChildren<SkinnedMeshRenderer>();
@@ -51,6 +96,7 @@ public class BlendShapeOrchestrator
                 _context.SetBlendShapeNames();
                 _context.SetBlendShapeOriginalWeights();
                 _context.SetBlendModeOverrideWeights();
+                RequestPreviewRefresh();
                 return true;
             }
         }

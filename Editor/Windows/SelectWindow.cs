@@ -12,6 +12,7 @@ public class SelectWindow : EditorWindow
     private bool isParentHasChild = true;
     private Vector2 scrollPosition;
     private float buttonHeight = 30f;
+    private int _hoveredBlendShapeIndex = -1;
 
     public static SelectWindow ShowWindow()
     {
@@ -51,6 +52,10 @@ public class SelectWindow : EditorWindow
             if (body != null)
             {
                 isParentHasChild = _orchestrator.SetBody(body.name);
+                if (isParentHasChild)
+                {
+                    _orchestrator.OpenPreviewWindow();
+                }
             }
             else
             {
@@ -69,13 +74,8 @@ public class SelectWindow : EditorWindow
         if (_context.Body != null && _context.BlendShapeNames != null && _context.BlendShapeOriginalWeights != null && _context.BlendShapeOverrideWeights != null)
             buttonHeight = EditorGUILayout.Slider("ボタンの高さ", buttonHeight, 10, 70);
         {
-            // 毎フレームOriginalWeightに戻す
-            for (int i = 0; i < _context.BlendShapeNames.Count; i++)
-            {
-                _context.UpdateBodyBlendShapeWeight(i, _context.BlendShapeOriginalWeights[i]);
-            }
-
             // ボタンを配置、マウスオーバーしている物は、OverrideWeightを適用
+            int hoveredBlendShapeIndex = -1;
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             for (int i = 0; i < _context.BlendShapeNames.Count; i++)
             {
@@ -96,10 +96,26 @@ public class SelectWindow : EditorWindow
 
                 if (rect.Contains(Event.current.mousePosition) && !_context.IsOpeningSettingWindow)
                 {
-                    _context.UpdateBodyBlendShapeWeight(i, _context.BlendShapeOverrideWeights[i]);
+                    hoveredBlendShapeIndex = i;
                 }
             }
             EditorGUILayout.EndScrollView();
+
+            if (hoveredBlendShapeIndex != _hoveredBlendShapeIndex)
+            {
+                _hoveredBlendShapeIndex = hoveredBlendShapeIndex;
+                if (_hoveredBlendShapeIndex >= 0)
+                {
+                    _context.ApplyPreviewWeight(_hoveredBlendShapeIndex, _context.BlendShapeOverrideWeights[_hoveredBlendShapeIndex]);
+                    _orchestrator.RequestPreviewRefresh();
+                }
+                else if (!_context.IsOpeningSettingWindow)
+                {
+                    // 設定画面を開いている間は、そちらのプレビューを優先する
+                    _context.ResetPreviewWeights();
+                    _orchestrator.RequestPreviewRefresh();
+                }
+            }
 
             GUILayout.Space(20);
             if (GUILayout.Button("Convert", GUILayout.Height(20)) && _context.Body != null)
@@ -120,6 +136,7 @@ public class SelectWindow : EditorWindow
             avatar.gameObject.SetActive(true);
         }
         _orchestrator.CloseSettingWindow();
+        _orchestrator.ClosePreviewWindow();
         _context.DeleteAll();
         _context = null;
         _orchestrator = null;

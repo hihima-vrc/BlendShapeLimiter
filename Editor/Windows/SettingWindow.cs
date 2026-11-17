@@ -21,15 +21,25 @@ public class SettingWindow : EditorWindow
         blendShapeIndex = _context.SelectedBlendShapeIndex;
         blendShapeName = _context.BlendShapeNames[blendShapeIndex];
         blendShapeOverrideWeight = _context.BlendShapeOverrideWeights[blendShapeIndex];
+        if (_context.Body != null)
+        {
+            _context.ApplyPreviewWeight(blendShapeIndex, blendShapeOverrideWeight);
+            _orchestrator.RequestPreviewRefresh();
+        }
     }
     private void OnGUI()
     {
+        EditorGUI.BeginChangeCheck();
         blendShapeOverrideWeight = EditorGUILayout.Slider(blendShapeName, blendShapeOverrideWeight, 0f, 100f);
-        if (_context.Body != null)
+        if (EditorGUI.EndChangeCheck())
         {
-            _context.UpdateBodyBlendShapeWeight(blendShapeIndex, blendShapeOverrideWeight);
+            if (_context.Body != null)
+            {
+                _context.ApplyPreviewWeight(blendShapeIndex, blendShapeOverrideWeight);
+                _orchestrator.RequestPreviewRefresh();
+            }
         }
-        else
+        if (_context.Body == null)
         {
             _orchestrator.CloseSettingWindow();
         }

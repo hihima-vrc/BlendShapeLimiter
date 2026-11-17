@@ -38,6 +38,22 @@ public class AvatarEditorContext
     {
         Body.SetBlendShapeWeight(blendShapeIndex, blendShapeWeight);
     }
+    public void ResetPreviewWeights()
+    {
+        if (Body == null || BlendShapeOriginalWeights == null) return;
+        for (int i = 0; i < Body.sharedMesh.blendShapeCount; i++)
+        {
+            if (i >= BlendShapeOriginalWeights.Count) break;
+            Body.SetBlendShapeWeight(i, BlendShapeOriginalWeights[i]);
+        }
+    }
+    public void ApplyPreviewWeight(int blendShapeIndex, float blendShapeWeight)
+    {
+        if (Body == null || BlendShapeOriginalWeights == null) return;
+        if (blendShapeIndex < 0 || blendShapeIndex >= Body.sharedMesh.blendShapeCount) return;
+        ResetPreviewWeights();
+        Body.SetBlendShapeWeight(blendShapeIndex, blendShapeWeight);
+    }
 
     // BlendShapeNames
     public List<string> BlendShapeNames { get; private set; } = new();
