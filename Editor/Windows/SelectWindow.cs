@@ -29,8 +29,16 @@ public class SelectWindow : EditorWindow
         {
             if (avatar != null)
             {
-                _context.SetAvatar(Instantiate(avatar.gameObject));
-                avatar.gameObject.SetActive(false);
+                // face-emo方式: 元アバターは無効化せず、クローンを遠方に置いてプレビュー専用にする
+                GameObject clone = Instantiate(avatar.gameObject);
+                clone.transform.position = new Vector3(100f, 100f, 100f);
+                clone.transform.rotation = Quaternion.identity;
+                clone.transform.localScale = Vector3.one;
+                clone.hideFlags = HideFlags.HideAndDontSave;
+                VRC_AvatarDescriptor descriptor = clone.GetComponent<VRC_AvatarDescriptor>();
+                if (descriptor != null) DestroyImmediate(descriptor);
+                clone.SetActive(true);
+                _context.SetAvatar(clone);
             }
             else
             {
@@ -44,8 +52,7 @@ public class SelectWindow : EditorWindow
         body = (SkinnedMeshRenderer)EditorGUILayout.ObjectField("Body", body, typeof(SkinnedMeshRenderer), true);
         if (avatar != null && body == null)
         {
-            EditorGUILayout.HelpBox("今無効化されたアバターからSkinnedMeshRendererをD&D", MessageType.Info);
-            EditorGUILayout.HelpBox("もし間違ったアバターを入れた場合は、一度ウィンドウを閉じてください", MessageType.Warning);
+            EditorGUILayout.HelpBox("アバターからSkinnedMeshRendererをD&D（プレビューは裏でクローンに対して行われます）", MessageType.Info);
         }
         if (EditorGUI.EndChangeCheck())
         {
